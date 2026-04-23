@@ -28,9 +28,9 @@ public class StudentRegistryTest {
     @BeforeEach
     public void setUp() {
         registry = new StudentRegistry();
-        student1 = new Student("STU001", "Alice Johnson", "alice@school.edu", 3.8);
-        student2 = new Student("STU002", "Bob Smith", "bob@school.edu", 3.5);
-        student3 = new Student("STU003", "Charlie Brown", "charlie@school.edu", 3.9);
+        student1 = new Student("STU001", "Alice Johnson", "alice@school.edu", 33);
+        student2 = new Student("STU002", "Bob Smith", "bob@school.edu", 34);
+        student3 = new Student("STU003", "Charlie Brown", "charlie@school.edu", 90);
     }
     
     @Test
@@ -52,7 +52,7 @@ public class StudentRegistryTest {
     @Test
     @DisplayName("Should throw exception when adding student with invalid email")
     public void testAddStudentWithInvalidEmail() {
-        Student invalidStudent = new Student("STU004", "Invalid", "invalid-email");
+        Student invalidStudent = new Student("STU004", "Invalid", "invalid-email",88);
         assertThrows(IllegalArgumentException.class, () -> registry.addStudent(invalidStudent));
     }
     
@@ -83,6 +83,31 @@ public class StudentRegistryTest {
         
         List<Student> allResults = registry.findStudentsByName("a");
         assertEquals(2, allResults.size()); // Alice and Charlie
+    }
+
+    @Test
+    @DisplayName("Should find student by email")
+    public void testFindStudentByEmail() {
+
+        registry.addStudent(student1);
+        registry.addStudent(student2);
+
+        Student foundExact = registry.findStudentByEmail("alice@school.edu");
+        assertNotNull(foundExact);
+        assertEquals("Alice Johnson", foundExact.getName());
+
+        Student foundCase = registry.findStudentByEmail("BOB@SCHOOL.EDU");
+        assertNotNull(foundCase);
+        assertEquals("Bob Smith", foundCase.getName());
+
+        Student notFound = registry.findStudentByEmail("nobody@school.edu");
+        assertNull(notFound);
+
+        Student nullEmail = registry.findStudentByEmail(null);
+        assertNull(nullEmail);
+
+        Student emptyEmail = registry.findStudentByEmail("");
+        assertNull(emptyEmail);
     }
     
     @Test

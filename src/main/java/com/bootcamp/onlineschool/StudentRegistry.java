@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
  */
 public class StudentRegistry {
     private List<Student> students;
-    private Map<String, Student> studentMap;
+    private Map<String, Student> studentMap,studentMap1;
     
     public StudentRegistry() {
         this.students = new ArrayList<>();
         this.studentMap = new HashMap<>();
+        this.studentMap1 = new HashMap<>();
     }
     
     /**
@@ -33,6 +34,7 @@ public class StudentRegistry {
         }
         students.add(student);
         studentMap.put(student.getStudentId(), student);
+        studentMap1.put(student.getEmail(),student);
     }
     
     /**
@@ -52,6 +54,10 @@ public class StudentRegistry {
      */
     public Student findStudentById(String studentId) {
         return studentMap.get(studentId);
+    }
+
+    public Student findStudentByEmail(String studentEmail){
+        return studentMap1.get(studentEmail);
     }
     
     /**

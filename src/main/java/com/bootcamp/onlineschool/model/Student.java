@@ -1,6 +1,8 @@
 package com.bootcamp.onlineschool.model;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * Student class demonstrating:
@@ -14,21 +16,28 @@ public class Student {
     private String name;
     private String email;
     private double gpa;
+    private int age;
+    private List<Course> enrolledCourses;
+
     
     // Constructor with required fields
-    public Student(String studentId, String name, String email) {
+    public Student(String studentId, String name, String email,int age) {
         this.studentId = studentId;
         this.name = name;
         this.email = email;
         this.gpa = 0.0;
+        this.age=age;
+        this.enrolledCourses = new ArrayList<>();
     }
     
     // Constructor with all fields
-    public Student(String studentId, String name, String email, double gpa) {
+    public Student(String studentId, String name, String email, double gpa,int age) {
         this.studentId = studentId;
         this.name = name;
         this.email = email;
         this.gpa = gpa;
+        this.age=age;
+        this.enrolledCourses = new ArrayList<>();
     }
     
     // Getters and Setters
@@ -39,9 +48,13 @@ public class Student {
     public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
-    
+
     public String getName() {
         return name;
+    }
+
+    public int getAge(){
+        return age;
     }
     
     public void setName(String name) {
@@ -54,6 +67,14 @@ public class Student {
     
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setAge(int age){
+        if (age >= 16 && age <= 100) {
+            this.age = age;
+        } else {
+            throw new IllegalArgumentException("age must be between 16 and 100");
+        }
     }
     
     public double getGpa() {
@@ -70,13 +91,18 @@ public class Student {
     
     // Validate email format
     public boolean isValidEmail() {
-        return email != null && email.contains("@") && email.contains(".");
+        return email != null && email.contains("@") && email.contains(".") 
+        && email.endsWith("@school.edu");
+    }
+
+    public boolean isValidAge(){
+        return age>=16 && age<=100;
     }
     
     @Override
     public String toString() {
-        return String.format("Student{id='%s', name='%s', email='%s', gpa=%.2f}", 
-                studentId, name, email, gpa);
+        return String.format("Student{id='%s', name='%s', email='%s', gpa=%.2f, age='%d'}", 
+                studentId, name, email, gpa, age);
     }
     
     @Override
@@ -87,6 +113,37 @@ public class Student {
         return Objects.equals(studentId, student.studentId);
     }
     
+    public void enrollInCourse(Course course) {
+        if (!enrolledCourses.contains(course)) {
+            this.enrolledCourses.add(course);
+        }
+        else {
+            throw new IllegalArgumentException("Student is already enrolled in this course.");
+        }
+    }
+
+    public void dropCourse(String courseId) {
+        for (int i = 0; i < enrolledCourses.size(); i++) {
+            if (this.enrolledCourses.get(i).getCourseId().equals(courseId)) {
+                this.enrolledCourses.remove(i);
+                return; 
+            }
+        }
+        throw new IllegalArgumentException("Student is not enrolled in this course.");
+    }
+
+    public List<Course> getEnrolledCourses() {
+        return enrolledCourses;
+    }
+
+    public int getTotalCredits() {
+        int total = 0;
+        for (Course course : enrolledCourses) {
+            total += course.getCredits();
+        }
+        return total;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(studentId);
