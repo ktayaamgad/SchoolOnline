@@ -32,9 +32,15 @@ public class StudentRegistry {
         if (!student.isValidEmail()) {
             throw new IllegalArgumentException("Invalid email format");
         }
+        if (studentMap.containsKey(student.getStudentId())) {
+            throw new IllegalArgumentException("Student with this ID already exists");
+        }
+        if (studentMap1.containsKey(student.getEmail().toLowerCase())) {
+            throw new IllegalArgumentException("Student with this email already exists");
+        }
         students.add(student);
         studentMap.put(student.getStudentId(), student);
-        studentMap1.put(student.getEmail(),student);
+        studentMap1.put(student.getEmail().toLowerCase(), student);
     }
     
     /**
@@ -57,7 +63,10 @@ public class StudentRegistry {
     }
 
     public Student findStudentByEmail(String studentEmail){
-        return studentMap1.get(studentEmail);
+        if (studentEmail == null) {
+            return null;
+        }
+        return studentMap1.get(studentEmail.toLowerCase());
     }
     
     /**
@@ -127,11 +136,35 @@ public class StudentRegistry {
                 .orElse(0.0);
     }
     
+    public List<Student> findStudentsByGpaRange(double min, double max)
+    {
+        if(min>max)
+            throw new IllegalArgumentException("Min GPA cannot be greater than Max GPA");
+        List<Student> result = new ArrayList<>();
+        for(Student s:students)        {
+            if(s.getGpa()>=min && s.getGpa()<=max)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public List<Student> findStudentsByEmailDomain(String domain)
+    {
+        if(domain == null || domain.trim().isEmpty())
+            throw new IllegalArgumentException("Domain cannot be null or empty");
+        List<Student> result = new ArrayList<>();
+        for(Student s:students)  {
+            if(s.getEmail().toLowerCase().endsWith("@" + domain.toLowerCase()))
+                result.add(s);
+        }
+        return result;
+    }
     /**
      * Clear all students
      */
     public void clear() {
         students.clear();
         studentMap.clear();
+        studentMap1.clear();
     }
 }

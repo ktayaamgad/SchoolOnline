@@ -28,9 +28,9 @@ public class StudentRegistryTest {
     @BeforeEach
     public void setUp() {
         registry = new StudentRegistry();
-        student1 = new Student("STU001", "Alice Johnson", "alice@school.edu", 33);
-        student2 = new Student("STU002", "Bob Smith", "bob@school.edu", 34);
-        student3 = new Student("STU003", "Charlie Brown", "charlie@school.edu", 90);
+        student1 = new Student("STU001", "Alice Johnson", "alice@school.edu", 3.8, 33);
+        student2 = new Student("STU002", "Bob Smith", "bob@school.edu", 3.5, 34);
+        student3 = new Student("STU003", "Charlie Brown", "charlie@school.edu", 3.9, 90);
     }
     
     @Test
@@ -52,7 +52,7 @@ public class StudentRegistryTest {
     @Test
     @DisplayName("Should throw exception when adding student with invalid email")
     public void testAddStudentWithInvalidEmail() {
-        Student invalidStudent = new Student("STU004", "Invalid", "invalid-email",88);
+        Student invalidStudent = new Student("STU004", "Invalid", "invalid-email", 3.0, 88);
         assertThrows(IllegalArgumentException.class, () -> registry.addStudent(invalidStudent));
     }
     
@@ -194,4 +194,44 @@ public class StudentRegistryTest {
         registry.clear();
         assertEquals(0, registry.getStudentCount());
     }
+
+    @Test
+    @DisplayName("Should not allow duplicate student IDs")
+    public void testDuplicateStudentIds() {
+        registry.addStudent(student1);
+        Student duplicateIdStudent = new Student("STU001", "Duplicate", "duplicate@ school.edu", 3.0, 88);
+        assertThrows(IllegalArgumentException.class, () -> registry.addStudent(duplicateIdStudent));
+    }
+
+    @Test
+    @DisplayName("Should not allow duplicate student emails")
+    public void testDuplicateStudentEmails() {
+        registry.addStudent(student1);
+        Student duplicateEmailStudent = new Student("STU004", "Duplicate Email", "alice@school.edu", 3.0, 88);
+        assertThrows(IllegalArgumentException.class, () -> registry.addStudent(duplicateEmailStudent));
+    }
+
+    @Test
+    @DisplayName("Should find students by GPA range")
+    public void testFindStudentsByGpaRange() {
+        registry.addStudent(student1);
+        registry.addStudent(student2);
+        registry.addStudent(student3);
+        List<Student> gpaRange = registry.findStudentsByGpaRange(3.6, 3.9);
+        assertEquals(2, gpaRange.size());
+        assertThrows(IllegalArgumentException.class,()->registry.findStudentsByGpaRange(4,3));
+    }
+
+    @Test
+    @DisplayName("Should find students by email domain")
+    public void testFindStudentsByEmailDomain() {
+        registry.addStudent(student1);
+        registry.addStudent(student2);
+        registry.addStudent(student3);
+        List<Student> domainStudents = registry.findStudentsByEmailDomain("school.edu");
+        assertEquals(3, domainStudents.size());
+        assertThrows(IllegalArgumentException.class, () -> registry.findStudentsByEmailDomain(null));
+        assertThrows(IllegalArgumentException.class, () -> registry.findStudentsByEmailDomain(""));
+    }
 }
+

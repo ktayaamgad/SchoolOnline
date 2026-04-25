@@ -6,6 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * JUnit tests for Student class
  * Demonstrates:
@@ -24,6 +27,12 @@ public class StudentTest {
         student = new Student("STU001", "John Doe", "john@school.edu",50);
     }
     
+    @Test
+    @DisplayName("Should be Student instance")
+    public void testStudentInstance() {
+        assertTrue(student instanceof Student);
+    }
+
     @Test
     @DisplayName("Should create student with valid data")
     public void testStudentCreation() {
@@ -159,5 +168,70 @@ public class StudentTest {
     @DisplayName("check if calculate the total credits correctly")
     public void droppingNonExistent(){
         assertThrows(IllegalArgumentException.class, () -> student.dropCourse("DODO"));
+    }
+
+    @Test
+    @DisplayName("check if calculateGpa works correctly")
+    public void testCalculateGpa(){
+        Course mathCourse = new Course("MATH", "Calculus", 4);
+        Course musicCourse = new Course("MUSIC", "Dancing", 5);
+        student.enrollInCourse(mathCourse);
+        student.enrollInCourse(musicCourse);
+
+        Map<Course, String> grades = new HashMap<>();
+        grades.put(mathCourse, "A");
+        grades.put(musicCourse, "A");
+
+        student.calculateGpa(grades);
+        double expectedGpa = (4.0 * 4 + 4.0 * 5) / 9; 
+        assertEquals(expectedGpa, student.getGpa(), 0.01);
+        grades.put(musicCourse, "B");
+        student.calculateGpa(grades);
+        expectedGpa = (4.0 * 4 + 3.0 * 5) / 9;
+        assertEquals(expectedGpa, student.getGpa(), 0.01);
+        assertThrows(IllegalArgumentException.class, () -> student.calculateGpa(null));
+        assertThrows(IllegalArgumentException.class, () -> student.calculateGpa(new HashMap<>()));
+    }
+
+    @Test
+    @DisplayName("Should inherit User properties and methods")
+    public void testInheritance() {
+        // Test instanceof
+        assertTrue(student instanceof User);
+
+        // Test inherited methods
+        student.setName("Jane Doe");
+        assertEquals("Jane Doe", student.getName());
+
+        student.setEmail("jane@school.edu");
+        assertEquals("jane@school.edu", student.getEmail());
+
+        student.setId("STU002");
+        assertEquals("STU002", student.getId());
+    }
+
+    @Test
+    @DisplayName("Should demonstrate polymorphism with User reference")
+    public void testPolymorphism() {
+        User user = student;
+
+        assertEquals("STU001", user.getId());
+        assertEquals("John Doe", user.getName());
+        assertEquals("john@school.edu", user.getEmail());
+
+        String toString = user.toString();
+        assertTrue(toString.startsWith("Student{"));
+        assertTrue(toString.contains("STU001"));
+    }
+
+    @Test
+    @DisplayName("Should use overridden equals and hashCode")
+    public void testOverriddenEqualsAndHashCode() {
+        Student student2 = new Student("STU001", "Different Name", "different@school.edu", 3.0, 30);
+        Student student3 = new Student("STU002", "John Doe", "john@school.edu", 3.0, 23);
+
+        assertEquals(student, student2);
+        assertNotEquals(student, student3);
+        assertEquals(student.hashCode(), student2.hashCode());
     }
 }

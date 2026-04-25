@@ -3,6 +3,7 @@ package com.bootcamp.onlineschool.model;
 import java.util.List;
 import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Student class demonstrating:
@@ -11,10 +12,7 @@ import java.util.ArrayList;
  * - toString() method
  * - equals() and hashCode() methods
  */
-public class Student {
-    private String studentId;
-    private String name;
-    private String email;
+public class Student extends User {
     private double gpa;
     private int age;
     private List<Course> enrolledCourses;
@@ -22,9 +20,7 @@ public class Student {
     
     // Constructor with required fields
     public Student(String studentId, String name, String email,int age) {
-        this.studentId = studentId;
-        this.name = name;
-        this.email = email;
+        super(studentId, name, email);
         this.gpa = 0.0;
         this.age=age;
         this.enrolledCourses = new ArrayList<>();
@@ -32,9 +28,7 @@ public class Student {
     
     // Constructor with all fields
     public Student(String studentId, String name, String email, double gpa,int age) {
-        this.studentId = studentId;
-        this.name = name;
-        this.email = email;
+        super(studentId, name, email);
         this.gpa = gpa;
         this.age=age;
         this.enrolledCourses = new ArrayList<>();
@@ -42,33 +36,17 @@ public class Student {
     
     // Getters and Setters
     public String getStudentId() {
-        return studentId;
+        return getId();
     }
     
     public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
-    public String getName() {
-        return name;
+        setId(studentId);
     }
 
     public int getAge(){
         return age;
     }
     
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setAge(int age){
         if (age >= 16 && age <= 100) {
             this.age = age;
@@ -91,8 +69,8 @@ public class Student {
     
     // Validate email format
     public boolean isValidEmail() {
-        return email != null && email.contains("@") && email.contains(".") 
-        && email.endsWith("@school.edu");
+        return getEmail() != null && getEmail().contains("@") && getEmail().contains(".") 
+        && getEmail().endsWith("@school.edu");
     }
 
     public boolean isValidAge(){
@@ -102,7 +80,7 @@ public class Student {
     @Override
     public String toString() {
         return String.format("Student{id='%s', name='%s', email='%s', gpa=%.2f, age='%d'}", 
-                studentId, name, email, gpa, age);
+                getId(), getName(), getEmail(), gpa, age);
     }
     
     @Override
@@ -110,7 +88,12 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return Objects.equals(studentId, student.studentId);
+        return Objects.equals(getId(), student.getId());
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
     
     public void enrollInCourse(Course course) {
@@ -144,8 +127,41 @@ public class Student {
         return total;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(studentId);
+    public String getRole() {
+        return "Student";
+    }
+    
+    public void calculateGpa(Map<Course, String> grades) {
+        if (grades == null || grades.isEmpty()) {
+            throw new IllegalArgumentException("Grades map cannot be null or empty");
+        }
+
+        double totalGradePoints = 0.0;
+        int totalCredits = 0;
+
+        for (Map.Entry<Course, String> entry : grades.entrySet()) {
+            Course course = entry.getKey();
+            String letterGrade = entry.getValue().toUpperCase(); 
+            double Value = 0.0;
+            
+            switch (letterGrade) {
+                case "A": Value = 4.0; break;
+                case "B": Value = 3.0; break;
+                case "C": Value = 2.0; break;
+                case "D": Value = 1.0; break;
+                case "F": Value = 0.0; break;
+                default: 
+                    throw new IllegalArgumentException("Invalid grade provided: " + letterGrade);
+            }
+            
+            totalGradePoints += (Value * course.getCredits());
+            totalCredits += course.getCredits();
+        }
+
+        if (totalCredits > 0) {
+            this.gpa = totalGradePoints / totalCredits;
+        } else {
+            this.gpa = 0.0;
+        }
     }
 }
