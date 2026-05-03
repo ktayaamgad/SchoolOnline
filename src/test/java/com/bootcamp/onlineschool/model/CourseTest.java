@@ -28,6 +28,11 @@ public class CourseTest {
         course = new Course("CS101", "Introduction to Java", 3, "Dr. Smith", 30);
     }
     
+    private void assertCourseIsFull(Course course) {
+        assertTrue(course.isFull());
+        assertEquals(0, course.getAvailableSeats());
+    }
+    
     @Test
     @DisplayName("Should create course with valid data")
     public void testCourseCreation() {
@@ -112,7 +117,7 @@ public class CourseTest {
             for (int i = 0; i < 30; i++) {
                 course.enrollStudent();
             }
-            assertTrue(course.isFull());
+            assertCourseIsFull(course);
         }
         
         @ParameterizedTest
@@ -176,9 +181,8 @@ public class CourseTest {
             Course singleSeat = new Course("CS999", "Special Topic", 1, "Dr. X", 1);
             
             assertTrue(singleSeat.enrollStudent());
-            assertTrue(singleSeat.isFull());
+            assertCourseIsFull(singleSeat);
             assertFalse(singleSeat.enrollStudent());
-            assertEquals(0, singleSeat.getAvailableSeats());
         }
         
         @Test
@@ -190,7 +194,7 @@ public class CourseTest {
                 assertTrue(largeCourse.enrollStudent());
             }
             
-            assertTrue(largeCourse.isFull());
+            assertCourseIsFull(largeCourse);
             assertEquals(500, largeCourse.getEnrolledStudents());
             assertFalse(largeCourse.enrollStudent());
         }
