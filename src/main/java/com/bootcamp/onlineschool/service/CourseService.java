@@ -96,6 +96,13 @@ public class CourseService {
     public int getTotalCourses() {
         return courses.size();
     }
+
+    /**
+     * Clear all course data
+     */
+    public void clear() {
+        courses.clear();
+    }
     
     /**
      * Custom exception for course not found
@@ -113,5 +120,10 @@ public class CourseService {
         public CourseAlreadyExistsException(String message) {
             super(message);
         }
+    }
+
+    public Object findCourseByCode(String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findCourseByCode'");
     }
 }

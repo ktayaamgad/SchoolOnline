@@ -128,4 +128,8 @@ public class StudentRegistry {
         students.clear();
         studentMap.clear();
     }
+
+    public Student createStudent(int i, String string, int j, List<Integer> of) {
+        throw new UnsupportedOperationException("Unimplemented method 'createStudent'");
+    }
 }

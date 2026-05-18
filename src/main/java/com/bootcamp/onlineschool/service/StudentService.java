@@ -90,6 +90,13 @@ public class StudentService {
     }
     
     /**
+     * Clear all student data
+     */
+    public void clear() {
+        studentRegistry.clear();
+    }
+    
+    /**
      * Custom exception for student not found
      */
     public static class StudentNotFoundException extends RuntimeException {
